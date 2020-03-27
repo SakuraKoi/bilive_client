@@ -2,13 +2,15 @@
 
 [![Node.js](https://img.shields.io/badge/Node.js-v10.0%2B-green.svg)](https://nodejs.org)
 [![Commitizen friendly](https://img.shields.io/badge/Commitizen-Friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-![GitHub repo size](https://img.shields.io/github/repo-size/Vector000/bilive_client.svg)
 [![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Vector000/bilive_client/blob/2.1.0-beta/LICENSE)
+
+* **这是一个基于[Vector000的bilive_client分支](https://github.com/Vector000/bilive_client)的分支, 进行了部分修改以符合我自己的使用需求**
+* **目前的主要修改为支持为每个用户分配不同的抽奖暂停时间**
+node现学的, 代码很渣请见谅xd
 
 * 这是一个次分支，感谢所有对[主分支](https://github.com/lzghzr/bilive_client)做出贡献的人及其他同类开源软件的开发者
 * 有兴趣支持原作者的，请朝这里打钱=>[给lzghzr打钱](https://github.com/lzghzr/bilive_client/wiki)
-* 有兴趣向我投喂的，请朝这里打钱=>[请给我钱](https://github.com/Vector000/Something_Serious/blob/master/pics/mm_reward_qrcode.png)
-* 感谢大佬的推荐！趴 _(:3」∠)_
+* 有兴趣向Vector000大佬投喂的，请朝这里打钱=>[请给我钱](https://github.com/Vector000/Something_Serious/blob/master/pics/mm_reward_qrcode.png)
 
 ## 使用方法
 

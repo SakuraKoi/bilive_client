@@ -12,7 +12,7 @@ class Raffle extends Plugin {
   public author = 'Vector000'
   public loaded = false
   // 是否开启抽奖
-  private _raffle = true
+  // private _raffle = true
   // 普通/风暴封禁列表
   private _raffleBanList: Map<string, boolean> = new Map()
   private _stormBanList: Map<string, boolean> = new Map()
@@ -20,7 +20,7 @@ class Raffle extends Plugin {
   private _stormEarn: any = {}
   public async load({ defaultOptions, whiteList }: { defaultOptions: options, whiteList: Set<string> }) {
     // 抽奖暂停
-    defaultOptions.config['rafflePause'] = []
+    defaultOptions.newUserData['rafflePause'] = []
     defaultOptions.info['rafflePause'] = {
       description: '抽奖暂停',
       tip: '在此时间段内不参与抽奖, 24时制, 以\",\"分隔, 只有一个时间时不启用',
@@ -133,8 +133,8 @@ class Raffle extends Plugin {
   }
   /**
    * 领取数量清零
-   * 
-   * @param users 
+   *
+   * @param users
    * @private
    */
   private async _refreshCount(users: Map<string, User>) {
@@ -142,9 +142,9 @@ class Raffle extends Plugin {
   }
   /**
    * 加载领取数量
-   * 
-   * @param options 
-   * @param users 
+   *
+   * @param options
+   * @param users
    * @private
    */
   private async _loadCount(options: options, users: Map<string, User>) {
@@ -158,8 +158,8 @@ class Raffle extends Plugin {
   }
   /**
    * 计算优先级，确定用户是否允许抽奖
-   * 
-   * @param users 
+   *
+   * @param users
    * @private
    * @returns {number}
    */
@@ -183,6 +183,8 @@ class Raffle extends Plugin {
   }
   public async loop({ cstMin, cstHour, cstString, options, users }: { cstMin: number, cstHour: number, cstString: string, options: options, users: Map<string, User> }) {
     // 抽奖暂停
+    // sakura > per user raffle pause
+    /*
     const rafflePause = <number[]>options.config['rafflePause']
     if (rafflePause.length > 1) {
       const start = rafflePause[0]
@@ -191,6 +193,7 @@ class Raffle extends Plugin {
       else this._raffle = true
     }
     else this._raffle = true
+    */
     if (cstMin === 0 && cstHour % 2 === 0) {
       this._raffleBanList.clear()
       this._stormBanList.clear()
@@ -202,17 +205,20 @@ class Raffle extends Plugin {
     Options.save()
   }
   public async msg({ message, options, users }: { message: raffleMessage | lotteryMessage | beatStormMessage, options: options, users: Map<string, User> }) {
-    if (this._raffle) await this._preRaffle({message, options, users})
+    // Sakura - per user raffle pause
+    // if (this._raffle)
+      await this._preRaffle({message, options, users})
   }
   // 抽奖缓存，应对大量抽奖
   private raffleSet: Set<number> = new Set()
   private raffleTime: number = Date.now()
   /**
    * 抽奖缓冲，应对大量抽奖
-   * 
+   *
    */
   private async _preRaffle({ message, options, users }: { message: raffleMessage | lotteryMessage | beatStormMessage, options: options, users: Map<string, User> }) {
     const raffleID = message.id
+
     if (message.cmd === 'beatStorm') this._doStorm({message, options, users})
     else {
       if (Date.now() - this.raffleTime < 400) {
@@ -230,7 +236,7 @@ class Raffle extends Plugin {
   }
   /**
    * 进行非beatStorm类抽奖
-   * 
+   *
    * @param {message, options, users}
    * @private
    */
@@ -240,12 +246,25 @@ class Raffle extends Plugin {
     for (let [uid, user] of users) {
       if (user.captchaJPEG !== '' || !user.userData[message.cmd]) continue
       if (this._raffleBanList.get(uid)) continue
+
+      // sakura per user raffle
+      const cst = new Date(Date.now() + 8 * 60 * 60 * 1000)
+      const cstHour = cst.getUTCHours()
+      const rafflePause = <number[]>user.userData['rafflePause']
+      if (rafflePause.length > 1) {
+        const start = rafflePause[0]
+        const end = rafflePause[1]
+        if (start > end && (cstHour >= start || cstHour < end) || (cstHour >= start && cstHour < end)) {
+          // tools.Log(user.nickname, '暂停抽奖', message.id)
+          continue
+        }
+      }
+
       const droprate = <number>options.advConfig['raffleDrop']
       if (droprate !== 0 && Math.random() < droprate / 100) {
         tools.Log(user.nickname, '丢弃抽奖', message.id)
         continue
-      }
-      else {
+      } else {
         const lottery = new Lottery(message, user, options)
         lottery
           .on('msg', (msg: pluginNotify) => {
