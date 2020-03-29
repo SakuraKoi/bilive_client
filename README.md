@@ -5,8 +5,15 @@
 [![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Vector000/bilive_client/blob/2.1.0-beta/LICENSE)
 
 * **这是一个基于[Vector000的bilive_client分支](https://github.com/Vector000/bilive_client)的分支, 进行了部分修改以符合我自己的使用需求**
-* **目前的主要修改为支持为每个用户分配不同的抽奖暂停时间**
-node现学的, 代码很渣请见谅xd
+
+**目前的主要修改如下**
+* 为每个用户分配不同的抽奖暂停时间
+* 将用户的挂机报告推送至各自的server酱
+* 通过b站抽奖id连续性的规则进行漏抽统计
+
+因为node是现学的, 所以代码很渣请见谅xd
+
+目前在使用上有一些bug, 不建议将其部署至生产环境
 
 * 这是一个次分支，感谢所有对[主分支](https://github.com/lzghzr/bilive_client)做出贡献的人及其他同类开源软件的开发者
 * 有兴趣支持原作者的，请朝这里打钱=>[给lzghzr打钱](https://github.com/lzghzr/bilive_client/wiki)
