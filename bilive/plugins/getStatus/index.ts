@@ -260,6 +260,7 @@ class GetStatus extends Plugin {
             tmp['medalData'] = await this._getMedalInfo(user)
             tmp['bagData'] = await this._getBagInfo(user)
             tmp['earnData'] = await this._getEarnInfo(user)
+            tmp['userData'] = user.userData
             rawMsg[uid] = tmp
         }
         this._logMSGHandler(rawMsg)
