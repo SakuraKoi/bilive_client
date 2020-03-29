@@ -282,13 +282,13 @@ class Raffle extends Plugin {
             if (message.cmd !==  'lottery') {
                 const droprate = <number>options.advConfig['normalRaffleDrop']
                 if (droprate !== 0 && Math.random() < droprate / 100) {
-                    tools.Log(user.nickname, '丢弃抽奖', message.id)
+                    tools.Log(user.nickname, '丢弃抽奖 (普通)', message.id)
                     continue
                 }
             } else {
                 const droprate = <number>options.advConfig['shipRaffleDrop']
                 if (droprate !== 0 && Math.random() < droprate / 100) {
-                    tools.Log(user.nickname, '丢弃抽奖', message.id)
+                    tools.Log(user.nickname, '丢弃抽奖 (舰队)', message.id)
                     continue
                 }
             }
@@ -319,7 +319,7 @@ class Raffle extends Plugin {
             if (this._stormEarn[uid] !== undefined && this._stormEarn[uid] >= <number>user.userData['beatStormLimit']) return
             if (<number>user.userData['beatStormPriority'] < stormPriorityTheshold) return
             const droprate = <number>options.advConfig['beatStormDrop']
-            if (droprate !== 0 && Math.random() < droprate / 100) tools.Log(user.nickname, '丢弃抽奖', message.id)
+            if (droprate !== 0 && Math.random() < droprate / 100) tools.Log(user.nickname, '丢弃抽奖 (舰队)', message.id)
             else {
                 const delay = <number>options.advConfig['beatStormDelay']
                 if (delay !== 0) await tools.Sleep(delay)
