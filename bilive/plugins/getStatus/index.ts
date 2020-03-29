@@ -13,15 +13,35 @@ class GetStatus extends Plugin {
   // 监听状态
   private listenStatus: any = {
     startTime: 0,
-    raffle: 0,
-    lottery: 0,
-    beatStorm: 0
+    raffle: {
+      count: 0,
+      firstId: -1,
+      lastId: -1
+    },
+    lottery: {
+      count: 0,
+      firstId: -1,
+      lastId: -1
+    },
+    beatStorm: {
+      count: 0
+    }
   }
   // 监听状态(Daily, 只统计当天0点开始的监听量)
   private todayListenStatus: any = {
-    raffle: 0,
-    lottery: 0,
-    beatStorm: 0
+    raffle: {
+      count: 0,
+      firstId: -1,
+      lastId: -1
+    },
+    lottery: {
+      count: 0,
+      firstId: -1,
+      lastId: -1
+    },
+    beatStorm: {
+      count: 0
+    }
   }
   // 封禁列表
   private _raffleBanList: Map<string, boolean> = new Map()
@@ -55,7 +75,9 @@ class GetStatus extends Plugin {
     if (cstString === '00:00') {
       this._clearStatus(this._todayRaffleStatus, users)
       for (let key in this.todayListenStatus) {
-        this.todayListenStatus[key] = 0
+        this.todayListenStatus[key].count = 0
+        this.todayListenStatus[key].firstId = -1
+        this.todayListenStatus[key].lastId = 0
       }
     }
     let time = <number>options.config.getStatus
@@ -63,8 +85,25 @@ class GetStatus extends Plugin {
     if (time > 0 && cstMin === 59 && (cstHour + 1) % time === 0) this._getStatus(users, true)
   }
   public async msg({ message }: { message: raffleMessage | lotteryMessage | beatStormMessage }) {
-    this.listenStatus[message.cmd]++
-    this.todayListenStatus[message.cmd]++
+    this.listenStatus[message.cmd].count++
+    this.todayListenStatus[message.cmd].count++
+    if (message.cmd === "beatStorm") return
+    if (this.listenStatus[message.cmd].firstId === -1) {
+      this.listenStatus[message.cmd].firstId = message.id
+      this.listenStatus[message.cmd].lastId = message.id
+    } else {
+      if (this.listenStatus[message.cmd].lastId < message.id) {
+        this.listenStatus[message.cmd].lastId = message.id
+      }
+    }
+    if (this.todayListenStatus[message.cmd].firstId === -1) {
+      this.todayListenStatus[message.cmd].firstId = message.id
+      this.todayListenStatus[message.cmd].lastId = message.id
+    } else {
+      if (this.todayListenStatus[message.cmd].lastId < message.id) {
+        this.todayListenStatus[message.cmd].lastId = message.id
+      }
+    }
   }
   public async notify({ msg, users }: { msg: pluginNotify, users: Map<string, User> }) {
     let data = msg.data
@@ -298,11 +337,34 @@ class GetStatus extends Plugin {
     let logMsg: string = '\n'
     let headLine: string = `/********************************* bilive_client 运行信息 *********************************/`
     let timeLine: string = `本次挂机开始于 ${new Date(this.listenStatus.startTime).toString()}`
-    let raffleLine: string = `共监听到活动抽奖数：${this.listenStatus.raffle}(${this.todayListenStatus.raffle})`
-    let lotteryLine: string = `共监听到大航海抽奖数：${this.listenStatus.lottery}(${this.todayListenStatus.lottery})`
-    let beatStormLine: string = `共监听到节奏风暴抽奖数：${this.listenStatus.beatStorm}(${this.todayListenStatus.beatStorm})`
-    logMsg += headLine + '\n' + timeLine + '\n'
-      + raffleLine + '\n' + lotteryLine + '\n' + beatStormLine + '\n'
+    let raffleLine: string = `共监听到活动抽奖数：${this.listenStatus.raffle.count}(${this.todayListenStatus.raffle.count})`
+    let lotteryLine: string = `共监听到大航海抽奖数：${this.listenStatus.lottery.count}(${this.todayListenStatus.lottery.count})`
+    let beatStormLine: string = `共监听到节奏风暴抽奖数：${this.listenStatus.beatStorm.count}(${this.todayListenStatus.beatStorm.count})`
+
+    let totalMissedLine: string
+    let todayMissedLine: string
+    {
+      let totalRaffle: number = this.listenStatus.raffle.lastId - this.listenStatus.raffle.firstId;
+      let totalLottery: number = this.listenStatus.lottery.lastId - this.listenStatus.lottery.firstId;
+      let missedRaffleTotal: number = totalRaffle - this.listenStatus.raffle.count
+      let missedLotteryTotal: number = totalLottery - this.listenStatus.lottery.count
+      totalMissedLine = `总计漏抽数据: ${missedRaffleTotal} (${((totalRaffle / missedRaffleTotal) * 100).toFixed(2)}%) / ${missedLotteryTotal}  (${((totalLottery / missedLotteryTotal) * 100).toFixed(2)}%)`
+    }
+    {
+      let totalRaffle: number = this.todayListenStatus.raffle.lastId - this.todayListenStatus.raffle.firstId;
+      let totalLottery: number = this.todayListenStatus.lottery.lastId - this.todayListenStatus.lottery.firstId;
+      let missedRaffleTotal: number = totalRaffle - this.todayListenStatus.raffle.count
+      let missedLotteryTotal: number = totalLottery - this.todayListenStatus.lottery.count
+      todayMissedLine = `今日漏抽数据: ${missedRaffleTotal} (${((totalRaffle / missedRaffleTotal) * 100).toFixed(2)}%) / ${missedLotteryTotal}  (${((totalLottery / missedLotteryTotal) * 100).toFixed(2)}%)`
+    }
+    logMsg +=
+      headLine + '\n' +
+      timeLine + '\n' +
+      raffleLine + '\n' +
+      lotteryLine + '\n' +
+      beatStormLine + '\n' +
+      totalMissedLine + '\n' +
+      todayMissedLine + '\n'
     for (const uid in rawMsg) {
       let line, live, medal, bag, raffle: string = ''
       let user = rawMsg[uid]
@@ -383,6 +445,7 @@ EXP：${user.medalData.intimacy}/${user.medalData.next_intimacy} \
     pushMsg += `- 共监听到大航海抽奖数：${this.listenStatus.lottery}(${this.todayListenStatus.lottery})\n`
     pushMsg += `- 共监听到节奏风暴抽奖数：${this.listenStatus.beatStorm}(${this.todayListenStatus.beatStorm})\n`
     for (const uid in rawMsg) {
+      let userReport: string = ''
       let line, live, medal, bag, raffle: string = ''
       let user = rawMsg[uid]
       let ban: string = function(r: boolean, s: boolean) {
@@ -446,7 +509,8 @@ EXP：${user.medalData.intimacy}/${user.medalData.next_intimacy} \
         else tmp += '- 无\n'
         return tmp
       }()
-      pushMsg += '\n---\n' + line + '\n---\n' + live + '\n---\n' + medal + '\n---\n' + bag + '\n---\n' + raffle + '\n---\n'
+      userReport = '\n---\n' + line + '\n---\n' + live + '\n---\n' + medal + '\n---\n' + bag + '\n---\n' + raffle
+      pushMsg += userReport + '\n---\n';
     }
     tools.emit('SCMSG', <systemMSG>{
       message: pushMsg,
