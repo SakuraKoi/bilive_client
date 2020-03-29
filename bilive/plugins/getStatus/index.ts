@@ -15,9 +15,7 @@ class GetStatus extends Plugin {
     private listenStatus: any = {
         startTime: 0,
         raffle: {
-            count: 0,
-            firstId: -1,
-            lastId: -1
+            count: 0
         },
         lottery: {
             count: 0,
@@ -25,9 +23,7 @@ class GetStatus extends Plugin {
             lastId: -1
         },
         pklottery: {
-            count: 0,
-            firstId: -1,
-            lastId: -1
+            count: 0
         },
         beatStorm: {
             count: 0
@@ -36,9 +32,7 @@ class GetStatus extends Plugin {
     // 监听状态(Daily, 只统计当天0点开始的监听量)
     private todayListenStatus: any = {
         raffle: {
-            count: 0,
-            firstId: -1,
-            lastId: -1
+            count: 0
         },
         lottery: {
             count: 0,
@@ -46,9 +40,7 @@ class GetStatus extends Plugin {
             lastId: -1
         },
         pklottery: {
-            count: 0,
-            firstId: -1,
-            lastId: -1
+            count: 0
         },
         beatStorm: {
             count: 0
@@ -102,7 +94,7 @@ class GetStatus extends Plugin {
     public async msg({message}: { message: raffleMessage | lotteryMessage | beatStormMessage }) {
         this.listenStatus[message.cmd].count++
         this.todayListenStatus[message.cmd].count++
-        if (message.cmd !== 'beatStorm') {
+        if (message.cmd === 'lottery') {
             if (this.listenStatus[message.cmd].firstId === -1) {
                 this.listenStatus[message.cmd].firstId = message.id
                 this.listenStatus[message.cmd].lastId = message.id
@@ -373,32 +365,14 @@ class GetStatus extends Plugin {
         let totalMissedLine: string
         let todayMissedLine: string
         {
-            let totalRaffle: number = this.listenStatus.raffle.lastId - this.listenStatus.raffle.firstId + 1;
-            let missedRaffleTotal: number = totalRaffle - this.listenStatus.raffle.count
             let totalLottery: number = this.listenStatus.lottery.lastId - this.listenStatus.lottery.firstId + 1;
             let missedLotteryTotal: number = totalLottery - this.listenStatus.lottery.count
-            let totalPkLottery: number = this.listenStatus.pklottery.lastId - this.listenStatus.pklottery.firstId + 1;
-            let missedPkLotteryTotal: number = totalPkLottery - this.listenStatus.pklottery.count
-            totalMissedLine = `总计漏抽数据: ` +
-                `${missedRaffleTotal} (${((totalRaffle / missedRaffleTotal) * 100).toFixed(2)}%)` +
-                ` / ` +
-                `${missedLotteryTotal}  (${((totalLottery / missedLotteryTotal) * 100).toFixed(2)}%)` +
-                ` / ` +
-                `${missedPkLotteryTotal}  (${((totalPkLottery / missedPkLotteryTotal) * 100).toFixed(2)}%)`
+            totalMissedLine = `总计漏抽舰队: ${missedLotteryTotal}  (${((totalLottery / missedLotteryTotal) * 100).toFixed(2)}%)`
         }
         {
-            let totalRaffle: number = this.todayListenStatus.raffle.lastId - this.todayListenStatus.raffle.firstId  + 1;
-            let missedRaffleTotal: number = totalRaffle - this.todayListenStatus.raffle.count
             let totalLottery: number = this.todayListenStatus.lottery.lastId - this.todayListenStatus.lottery.firstId + 1;
             let missedLotteryTotal: number = totalLottery - this.todayListenStatus.lottery.count
-            let totalPkLottery: number = this.todayListenStatus.pklottery.lastId - this.todayListenStatus.pklottery.firstId + 1;
-            let missedPkLotteryTotal: number = totalPkLottery - this.todayListenStatus.pklottery.count
-            todayMissedLine = `今日漏抽数据: ` +
-                `${missedRaffleTotal} (${((totalRaffle / missedRaffleTotal) * 100).toFixed(2)}%)` +
-                ` / ` +
-                `${missedLotteryTotal}  (${((totalLottery / missedLotteryTotal) * 100).toFixed(2)}%)` +
-                ` / ` +
-                `${missedPkLotteryTotal}  (${((totalPkLottery / missedPkLotteryTotal) * 100).toFixed(2)}%)`
+            todayMissedLine = `今日漏抽舰队: ${missedLotteryTotal}  (${((totalLottery / missedLotteryTotal) * 100).toFixed(2)}%)`
         }
         logMsg +=
             headLine + '\n' +
