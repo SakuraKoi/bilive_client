@@ -111,6 +111,7 @@ class GetStatus extends Plugin {
                     this.listenStatus[message.cmd].lastId = message.id
                 }
             }
+
             if (this.todayListenStatus[message.cmd].firstId === -1) {
                 this.todayListenStatus[message.cmd].firstId = message.id
                 this.todayListenStatus[message.cmd].lastId = message.id
@@ -372,13 +373,12 @@ class GetStatus extends Plugin {
         let totalMissedLine: string
         let todayMissedLine: string
         {
-            let totalRaffle: number = this.listenStatus.raffle.lastId - this.listenStatus.raffle.firstId;
+            let totalRaffle: number = this.listenStatus.raffle.lastId - this.listenStatus.raffle.firstId + 1;
             let missedRaffleTotal: number = totalRaffle - this.listenStatus.raffle.count
-            let totalLottery: number = this.listenStatus.lottery.lastId - this.listenStatus.lottery.firstId;
+            let totalLottery: number = this.listenStatus.lottery.lastId - this.listenStatus.lottery.firstId + 1;
             let missedLotteryTotal: number = totalLottery - this.listenStatus.lottery.count
-
-            let totalPkLottery: number = this.listenStatus.pklottery.lastId - this.listenStatus.pklottery.firstId;
-            let missedPkLotteryTotal: number = totalLottery - this.listenStatus.pklottery.count
+            let totalPkLottery: number = this.listenStatus.pklottery.lastId - this.listenStatus.pklottery.firstId + 1;
+            let missedPkLotteryTotal: number = totalPkLottery - this.listenStatus.pklottery.count
             totalMissedLine = `总计漏抽数据: ` +
                 `${missedRaffleTotal} (${((totalRaffle / missedRaffleTotal) * 100).toFixed(2)}%)` +
                 ` / ` +
@@ -387,12 +387,12 @@ class GetStatus extends Plugin {
                 `${missedPkLotteryTotal}  (${((totalPkLottery / missedPkLotteryTotal) * 100).toFixed(2)}%)`
         }
         {
-            let totalRaffle: number = this.todayListenStatus.raffle.lastId - this.todayListenStatus.raffle.firstId;
+            let totalRaffle: number = this.todayListenStatus.raffle.lastId - this.todayListenStatus.raffle.firstId  + 1;
             let missedRaffleTotal: number = totalRaffle - this.todayListenStatus.raffle.count
-            let totalLottery: number = this.todayListenStatus.lottery.lastId - this.todayListenStatus.lottery.firstId;
+            let totalLottery: number = this.todayListenStatus.lottery.lastId - this.todayListenStatus.lottery.firstId + 1;
             let missedLotteryTotal: number = totalLottery - this.todayListenStatus.lottery.count
-            let totalPkLottery: number = this.todayListenStatus.pklottery.lastId - this.todayListenStatus.pklottery.firstId;
-            let missedPkLotteryTotal: number = totalLottery - this.todayListenStatus.pklottery.count
+            let totalPkLottery: number = this.todayListenStatus.pklottery.lastId - this.todayListenStatus.pklottery.firstId + 1;
+            let missedPkLotteryTotal: number = totalPkLottery - this.todayListenStatus.pklottery.count
             todayMissedLine = `今日漏抽数据: ` +
                 `${missedRaffleTotal} (${((totalRaffle / missedRaffleTotal) * 100).toFixed(2)}%)` +
                 ` / ` +
