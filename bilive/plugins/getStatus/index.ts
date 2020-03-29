@@ -511,6 +511,12 @@ EXP：${user.medalData.intimacy}/${user.medalData.next_intimacy} \
       }()
       userReport = '\n---\n' + line + '\n---\n' + live + '\n---\n' + medal + '\n---\n' + bag + '\n---\n' + raffle
       pushMsg += userReport + '\n---\n';
+
+      tools.emit('SCMSG', <systemMSG>{
+        message: userReport,
+        options: Options._,
+        user: user
+      })
     }
     tools.emit('SCMSG', <systemMSG>{
       message: pushMsg,

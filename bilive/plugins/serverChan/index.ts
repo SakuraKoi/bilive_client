@@ -67,9 +67,14 @@ class ServerChan extends Plugin {
    * @param {({ serverChan: string | undefined, message: string })} { serverChan, message }
    * @memberof ServerChan
    */
-  private _SCMSG({ serverChan, message }: { serverChan: string | undefined, message: string }) {
-    const server = serverChan || <string>Options._.config['adminServerChan']
-    if (server !== '') this._send(server, message)
+  private _SCMSG({ serverChan, message, user}: { serverChan: string | undefined, message: string, user: User | undefined }) {
+    if (user !== undefined) {
+      const userServerChan = <string>user.userData['serverChan']
+      if (userServerChan !== '') this._send(userServerChan, message)
+    } else {
+      const server = serverChan || <string>Options._.config['adminServerChan']
+      if (server !== '') this._send(server, message)
+    }
   }
   /**
    * 发送Server酱消息
