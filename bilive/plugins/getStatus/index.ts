@@ -366,14 +366,16 @@ class GetStatus extends Plugin {
         let totalMissedLine: string
         let todayMissedLine: string
         {
-            let totalLottery: number = this.listenStatus.lottery.lastId - this.listenStatus.lottery.firstId + 1;
+            let totalLottery: number = this.listenStatus.lottery.firstId === -1 ? 0 : (this.listenStatus.lottery.lastId - this.listenStatus.lottery.firstId + 1);
             let missedLotteryTotal: number = totalLottery - this.listenStatus.lottery.count
-            totalMissedLine = `总计漏抽舰队: ${missedLotteryTotal}  (${((totalLottery / missedLotteryTotal) * 100).toFixed(2)}%)`
+            let percent: number = totalLottery === 0 ? 0 : (missedLotteryTotal / totalLottery)
+            totalMissedLine = `总计漏抽舰队: ${missedLotteryTotal}  (${(percent * 100).toFixed(2)}%)`
         }
         {
-            let totalLottery: number = this.todayListenStatus.lottery.lastId - this.todayListenStatus.lottery.firstId + 1;
+            let totalLottery: number = this.todayListenStatus.lottery.firstId === -1 ? 0 : (this.todayListenStatus.lottery.lastId - this.todayListenStatus.lottery.firstId + 1);
             let missedLotteryTotal: number = totalLottery - this.todayListenStatus.lottery.count
-            todayMissedLine = `今日漏抽舰队: ${missedLotteryTotal}  (${((totalLottery / missedLotteryTotal) * 100).toFixed(2)}%)`
+            let percent: number = totalLottery === 0 ? 0 : (missedLotteryTotal / totalLottery)
+            todayMissedLine = `今日漏抽舰队: ${missedLotteryTotal}  (${(percent * 100).toFixed(2)}%)`
         }
         logMsg +=
             headLine + '\n' +
