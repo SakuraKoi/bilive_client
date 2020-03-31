@@ -463,9 +463,22 @@ EXP：${user.medalData.intimacy}/${user.medalData.next_intimacy} \
         let pushMsg: string = ''
         pushMsg += `# bilive_client 挂机情况报告\n`
         pushMsg += `- 本次挂机开始于 ${new Date(this.listenStatus.startTime).toString()}\n`
-        pushMsg += `- 共监听到活动抽奖数：${this.listenStatus.raffle}(${this.todayListenStatus.raffle})\n`
-        pushMsg += `- 共监听到大航海抽奖数：${this.listenStatus.lottery}(${this.todayListenStatus.lottery})\n`
-        pushMsg += `- 共监听到节奏风暴抽奖数：${this.listenStatus.beatStorm}(${this.todayListenStatus.beatStorm})\n`
+        pushMsg += `- 共监听到活动抽奖数：${this.listenStatus.raffle.count}(${this.todayListenStatus.raffle.count})\n`
+        pushMsg += `- 共监听到大航海抽奖数：${this.listenStatus.lottery.count}(${this.todayListenStatus.lottery.count})\n`
+        pushMsg += `- 共监听到大乱斗抽奖数：${this.listenStatus.pklottery.count}(${this.todayListenStatus.pklottery.count})`
+        pushMsg += `- 共监听到节奏风暴抽奖数：${this.listenStatus.beatStorm.count}(${this.todayListenStatus.beatStorm.count})\n`
+        {
+            let totalLottery: number = this.listenStatus.lottery.firstId === -1 ? 0 : (this.listenStatus.lottery.lastId - this.listenStatus.lottery.firstId + 1);
+            let missedLotteryTotal: number = totalLottery - this.listenStatus.lottery.count
+            let percent: number = totalLottery === 0 ? 0 : (missedLotteryTotal / totalLottery)
+            pushMsg += `总计漏抽舰队: ${missedLotteryTotal}  (${(percent * 100).toFixed(2)}%)`
+        }
+        {
+            let totalLottery: number = this.todayListenStatus.lottery.firstId === -1 ? 0 : (this.todayListenStatus.lottery.lastId - this.todayListenStatus.lottery.firstId + 1);
+            let missedLotteryTotal: number = totalLottery - this.todayListenStatus.lottery.count
+            let percent: number = totalLottery === 0 ? 0 : (missedLotteryTotal / totalLottery)
+            pushMsg += `今日漏抽舰队: ${missedLotteryTotal}  (${(percent * 100).toFixed(2)}%)`
+        }
         for (const uid in rawMsg) {
             let userReport: string = ''
             let line, live, medal, bag, raffle: string = ''
