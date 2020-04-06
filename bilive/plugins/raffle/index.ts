@@ -279,6 +279,8 @@ class Raffle extends Plugin {
                     continue
                 }
             }
+            // sakura per user raffle end
+            // sakura raffle drop
             if (message.cmd !==  'lottery') {
                 const droprate = <number>options.advConfig['normalRaffleDrop']
                 if (droprate !== 0 && Math.random() < droprate / 100) {
@@ -292,6 +294,7 @@ class Raffle extends Plugin {
                     continue
                 }
             }
+            // sakura raffle drop end
 
             const lottery = new Lottery(message, user, options)
             lottery
@@ -316,6 +319,21 @@ class Raffle extends Plugin {
         users.forEach(async (user, uid) => {
             if (user.captchaJPEG !== '' || !user.userData['beatStorm']) return
             if (this._raffleBanList.get(uid) || this._stormBanList.get(uid)) return
+
+            // sakura per user raffle
+            const cst = new Date(Date.now() + 8 * 60 * 60 * 1000)
+            const cstHour = cst.getUTCHours()
+            const rafflePause = <number[]>user.userData['rafflePause']
+            if (rafflePause.length > 1) {
+                const start = rafflePause[0]
+                const end = rafflePause[1]
+                if (start > end && (cstHour >= start || cstHour < end) || (cstHour >= start && cstHour < end)) {
+                    // tools.Log(user.nickname, '暂停抽奖', message.id)
+                    return
+                }
+            }
+            // sakura per user raffle end
+
             if (this._stormEarn[uid] !== undefined && this._stormEarn[uid] >= <number>user.userData['beatStormLimit']) return
             if (<number>user.userData['beatStormPriority'] < stormPriorityTheshold) return
             const droprate = <number>options.advConfig['beatStormDrop']
