@@ -2,7 +2,7 @@
 
 [![Node.js](https://img.shields.io/badge/Node.js-v10.0%2B-green.svg)](https://nodejs.org)
 [![Commitizen friendly](https://img.shields.io/badge/Commitizen-Friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Vector000/bilive_client/blob/2.1.0-beta/LICENSE)
+[![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/SakuraKoi/bilive_client/blob/master/LICENSE)
 
 * **这是一个基于[Vector000的bilive_client分支](https://github.com/Vector000/bilive_client)的分支, 进行了部分修改以符合我自己的使用需求**
 
@@ -14,8 +14,6 @@
 
 因为node是现学的, 所以代码很渣请见谅xd
 
-目前在使用上有一些bug, 不建议将其部署至生产环境
-
 * 这是一个次分支，感谢所有对[主分支](https://github.com/lzghzr/bilive_client)做出贡献的人及其他同类开源软件的开发者
 * 有兴趣支持原作者的，请朝这里打钱=>[给lzghzr打钱](https://github.com/lzghzr/bilive_client/wiki)
 * 有兴趣向Vector000大佬投喂的，请朝这里打钱=>[请给我钱](https://github.com/Vector000/Something_Serious/blob/master/pics/mm_reward_qrcode.png)
@@ -25,7 +23,7 @@
 1. 安装[Node.js](https://nodejs.org/)，建议使用LTS版本
 2. 安装[Git](https://git-scm.com/downloads)
 3. 在命令行中定位到想要安装的目录
-4. `git clone https://github.com/Vector000/bilive_client.git`
+4. `git clone https://github.com/SakuraKoi/bilive_client.git`
 5. `cd bilive_client` 进入程序主目录
 6. `npm i` 或 `npm install` 安装依赖包
 7. `npm i -g pm2`(自动更新所需，可忽略)
