@@ -56,6 +56,8 @@ class Raffle extends EventEmitter {
      */
     private _url!: string
 
+    private retry: boolean = true
+
     /**
      * 开始抽奖
      *
@@ -154,6 +156,11 @@ class Raffle extends EventEmitter {
                     }
                 } else {
                     tools.Log("HTTP错误: " + raffleAward.response.statusCode)
+                    if (this.retry) {
+                        this.retry = false;
+                        await tools.Sleep(500)
+                        this._RaffleAward()
+                    }
                 }
             }
         })
