@@ -33,9 +33,20 @@ class AppClient {
   public static readonly actionKey: string = 'appkey'
   public static readonly device: string = 'android'
   // bilibili 客户端
+  protected static readonly __loginSecretKey: string = '60698ba2f68e01ce44738920a0ffe768'
+  public static readonly loginAppKey: string = 'bca7e84c2d947ac6'
   private static readonly __secretKey: string = '560c52ccd288fed045859ed18bffd973'
+    public static get biliLocalId(): string { return this.RandomID(64) }
+    public static get buvid(): string { return this.RandomID(37).toLocaleUpperCase() }
+    public static readonly channel: string = 'bili'
+    public static get deviceId(): string { return this.biliLocalId }
+    public static readonly deviceName: string = 'SonyJ9110'
+    public static readonly devicePlatform: string = 'Android10SonyJ9110'
+    public static get localId(): string { return this.buvid }
+    public static readonly statistics: string = '%7B%22appId%22%3A1%2C%22platform%22%3A3%2C%22version%22%3A%225.57.0%22%2C%22abtest%22%3A%22%22%7D'
+
   public static readonly appKey: string = '1d8b6e7d45233436'
-  public static readonly build: string = '5500300'
+  public static readonly build: string = '5570300'
   public static readonly mobiApp: string = 'android'
   public static readonly platform: string = 'android'
   // bilibili 国际版
@@ -106,6 +117,19 @@ class AppClient {
   public static get baseQuery(): string {
     return `actionKey=${this.actionKey}&appkey=${this.appKey}&build=${this.build}&device=${this.device}&mobi_app=${this.mobiApp}&platform=${this.platform}`
   }
+
+    /**
+     * 登录请求参数
+     *
+     * @type {string}
+     * @memberof AppClient
+     */
+    public static get loginQuery(): string {
+        return `appkey=${this.loginAppKey}&bili_local_id=${this.biliLocalId}&build=${this.build}&buvid=${this.buvid}&channel=${this.channel}\
+&device=${this.device}&device_id=${this.deviceId}&device_name=${this.deviceName}&device_platform=${this.devicePlatform}&local_id=${this.localId}\
+&mobi_app=${this.mobiApp}&platform=${this.platform}&statistics=${this.statistics}`
+    }
+
   /**
    * 对参数签名
    *
@@ -115,11 +139,11 @@ class AppClient {
    * @returns {string}
    * @memberof AppClient
    */
-  public static signQuery(params: string, ts = true): string {
+  public static signQuery(params: string, ts = true, secretKey: string = this.__secretKey): string {
     let paramsSort = params
     if (ts) paramsSort = `${params}&ts=${this.TS}`
     paramsSort = paramsSort.split('&').sort().join('&')
-    const paramsSecret = paramsSort + this.__secretKey
+    const paramsSecret = paramsSort + secretKey
     const paramsHash = tools.Hash('md5', paramsSecret)
     return `${paramsSort}&sign=${paramsHash}`
   }
@@ -135,6 +159,19 @@ class AppClient {
     const paramsBase = params === undefined ? this.baseQuery : `${params}&${this.baseQuery}`
     return this.signQuery(paramsBase)
   }
+
+    /**
+     * 对登录参数加参后签名
+     *
+     * @param {string} [params]
+     * @returns {string}
+     * @memberof AppClient
+     */
+    public static signLoginQuery(params?: string): string {
+        const paramsBase = params === undefined ? this.loginQuery : `${params}&${this.loginQuery}`
+        return this.signQuery(paramsBase, true, this.__loginSecretKey)
+    }
+
   /**
    * 登录状态
    *
@@ -205,8 +242,12 @@ class AppClient {
    * @memberof AppClient
    */
   public headers: request.Headers = {
-    'Connection': 'Keep-Alive',
-    'User-Agent': 'Mozilla/5.0 BiliDroid/5.50.0 (bbcallen@gmail.com) os/android mobi_app/android build/5500300 innerVer/5500300'
+      'User-Agent': 'Mozilla/5.0 BiliDroid/5.57.0 (bbcallen@gmail.com) os/android model/J9110 mobi_app/android build/5570300 channel/bili innerVer/5570300 osVer/10 network/2',
+      'APP-KEY': AppClient.mobiApp,
+      'Buvid': AppClient.buvid,
+      'Device-ID': AppClient.deviceId,
+      'Display-ID': `${AppClient.buvid}-${AppClient.TS}`,
+      'env': 'prod'
   }
   /**
    * cookieJar
@@ -266,8 +307,8 @@ class AppClient {
     const authQuery = `username=${encodeURIComponent(this.userName)}&password=${passWord}${captcha}`
     const auth: request.Options = {
       method: 'POST',
-      uri: 'https://passport.bilibili.com/api/v2/oauth2/login',
-      body: AppClient.signQueryBase(authQuery),
+      uri: 'https://passport.bilibili.com/api/v3/oauth2/login',
+      body: AppClient.signLoginQuery(authQuery),
       jar: this.__jar,
       json: true,
       headers: this.headers
@@ -340,11 +381,11 @@ class AppClient {
    * @memberof AppClient
    */
   public async logout(): Promise<logoutResponse> {
-    const revokeQuery = `${this.cookieString.replace(/; */g, '&')}&access_token=${this.accessToken}`
+      const revokeQuery = `access_token=${this.accessToken}`
     const revoke: request.Options = {
       method: 'POST',
-      uri: 'https://passport.bilibili.com/api/v2/oauth2/revoke',
-      body: AppClient.signQueryBase(revokeQuery),
+        uri: 'https://passport.bilibili.com/x/passport-login/revoke',
+        body: AppClient.signLoginQuery(revokeQuery),
       json: true,
       headers: this.headers
     }
@@ -362,11 +403,11 @@ class AppClient {
    * @memberof AppClient
    */
   public async refresh(): Promise<loginResponse> {
-    const refreshQuery = `access_token=${this.accessToken}&refresh_token=${this.refreshToken}`
+    const refreshQuery = `refresh_token=${this.refreshToken}`
     const refresh: request.Options = {
       method: 'POST',
-      uri: 'https://passport.bilibili.com/api/v2/oauth2/refresh_token',
-      body: AppClient.signQueryBase(refreshQuery),
+        uri: 'https://passport.bilibili.com/x/passport-login/oauth2/refresh_token',
+        body: AppClient.signLoginQuery(refreshQuery),
       json: true,
       headers: this.headers
     }
