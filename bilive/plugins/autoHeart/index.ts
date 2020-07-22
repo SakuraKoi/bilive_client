@@ -82,6 +82,7 @@ class AutoSend extends Plugin {
                                     if (sendBag.body.code === 0) {
                                         const sendBagData = sendBag.body.data
                                         tools.Log(user.nickname, '自动擦牌子', `向房间 ${room_id} 赠送 ${send_num} 个${sendBagData.gift_name}`)
+                                        hasSent = true;
                                     } else tools.Log(user.nickname, '自动擦牌子', `向房间 ${room_id} 赠送 ${send_num} 个${giftData.gift_name} 失败`, sendBag.body)
                                     await tools.Sleep(3 * 1000)
                                 }
