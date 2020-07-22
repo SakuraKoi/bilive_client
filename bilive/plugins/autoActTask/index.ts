@@ -35,6 +35,7 @@ class AutoActTask extends Plugin {
    * @memberof AutoActTask 
    */
   private tasks: task[] = [
+      /*
     {
       "name": "LPL签到",
       "url": "https://api.live.bilibili.com/xlive/general-interface/v1/lpl-task/MatchSign",
@@ -58,7 +59,7 @@ class AutoActTask extends Plugin {
       "url": "https://api.live.bilibili.com/xlive/general-interface/v1/lpl-task/MatchShare",
       "bodyStr": "game_type=26",
       "endTime": 1584720000000
-    }
+    }*/
   ]
   /**
    * 自动任务

@@ -52,3 +52,4 @@ docs/view/script.js
 # ide file
 .idea
 *.bat
+/docs_back.zip
