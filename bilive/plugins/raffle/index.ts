@@ -281,7 +281,7 @@ class Raffle extends Plugin {
             }
             // sakura per user raffle end
             // sakura raffle drop
-            if (message.cmd !==  'lottery') {
+            if (message.cmd !== 'lottery') {
                 const droprate = <number>options.advConfig['normalRaffleDrop']
                 if (droprate !== 0 && Math.random() < droprate / 100) {
                     tools.Log(user.nickname, '丢弃抽奖 (普通)', message.id)
