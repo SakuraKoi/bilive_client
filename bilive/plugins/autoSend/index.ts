@@ -78,6 +78,8 @@ class AutoSend extends Plugin {
                     break
                   case 10: gift_value = 199 //蓝白胖次
                     break
+                  case 30607: gift_value = 50 // 小心心
+                    break;
                   default: continue
                 }
                 let send_num = Math.floor(intimacy_needed / gift_value)
