@@ -4,6 +4,8 @@
 [![Commitizen friendly](https://img.shields.io/badge/Commitizen-Friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/SakuraKoi/bilive_client/blob/master/LICENSE)
 
+**Archived - 白嫖已死**
+
 * **这是一个基于[Vector000的bilive_client分支](https://github.com/Vector000/bilive_client)的分支, 进行了部分修改以符合我自己的使用需求**
 
 **目前的主要修改如下**
